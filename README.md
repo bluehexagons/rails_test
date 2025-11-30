@@ -1,24 +1,46 @@
-# README
+# Ruby on Rails + React App
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Setup
 
-Things you may want to cover:
+This project consists of a Rails API backend and a React frontend.
 
-* Ruby version
+### Backend (Rails)
 
-* System dependencies
+1.  Install dependencies:
+    ```bash
+    bundle install
+    ```
+2.  Setup database:
+    ```bash
+    bin/rails db:create db:migrate
+    ```
+3.  Start the server:
+    ```bash
+    bin/rails s
+    ```
+    The API will be available at `http://localhost:3000`.
 
-* Configuration
+### Frontend (React)
 
-* Database creation
+1.  Navigate to the frontend directory:
+    ```bash
+    cd frontend
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Start the development server:
+    ```bash
+    npm run dev
+    ```
+    The frontend will be available at `http://localhost:5173`.
 
-* Database initialization
+## Features
 
-* How to run the test suite
+*   **Rails API**: Serves data to the frontend.
+*   **React Frontend**: Consumes the API.
+*   **SQLite Database**: Stores data.
+*   **CORS**: Configured to allow requests from `localhost:5173`.
+*   **Authentication**: `bcrypt` gem is installed for password hashing.
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
