@@ -6,14 +6,14 @@ export const Route = createFileRoute('/')({
 
 function Index() {
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+    <div className="container text-center">
       <h1>Welcome to Ruby on Rails + React App</h1>
       <p>This is the public home page.</p>
-      <div style={{ marginTop: '20px' }}>
-        <Link to="/login" style={{ marginRight: '10px', padding: '10px 20px', background: '#007bff', color: 'white', textDecoration: 'none', borderRadius: '5px' }}>
+      <div className="nav-links">
+        <Link to="/login" className="btn btn-primary">
           Login
         </Link>
-        <Link to="/signup" style={{ padding: '10px 20px', background: '#28a745', color: 'white', textDecoration: 'none', borderRadius: '5px' }}>
+        <Link to="/signup" className="btn btn-success">
           Sign Up
         </Link>
       </div>
