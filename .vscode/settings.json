@@ -1,0 +1,10 @@
+{
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/.git": true,
+		"/storage": true,
+		"**/tmp": true,
+		"/config": true,
+		"/db": true,
+	}
+}
