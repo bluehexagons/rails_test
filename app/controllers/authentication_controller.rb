@@ -14,10 +14,6 @@ class AuthenticationController < ApplicationController
 
   # DELETE /auth/logout
   def logout
-    # Since we are using stateless JWTs, the server doesn't need to do anything
-    # to "log out" the user. The client should simply delete the token.
-    # However, if we implemented a token blocklist (e.g. in Redis),
-    # we would add the token to the blocklist here.
     render json: { message: "Logged out successfully" }, status: :ok
   end
 
