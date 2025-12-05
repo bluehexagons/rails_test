@@ -1,4 +1,8 @@
-# Ruby on Rails + React App
+# rails_test
+
+rails_test was built in order to learn the basics of managing a Ruby on Rails + React stack, and get introduced to Ruby.
+
+Users can create accounts (no confirmation email is sent), log in, and click a button. The click count and last time are stored in a sqlite database, and used to track day/month/year streaks.
 
 ## Setup
 
@@ -35,12 +39,3 @@ This project consists of a Rails API backend and a React frontend.
     npm run dev
     ```
     The frontend will be available at `http://localhost:5173`.
-
-## Features
-
-*   **Rails API**: Serves data to the frontend.
-*   **React Frontend**: Consumes the API.
-*   **SQLite Database**: Stores data.
-*   **CORS**: Configured to allow requests from `localhost:5173`.
-*   **Authentication**: `bcrypt` gem is installed for password hashing.
-
