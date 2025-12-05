@@ -10,11 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_30_221338) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_05_212331) do
   create_table "entities", force: :cascade do |t|
     t.integer "count"
     t.datetime "created_at", null: false
+    t.datetime "created_time"
     t.string "kind"
+    t.datetime "modified_time"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id", "kind"], name: "index_entities_on_user_id_and_kind", unique: true

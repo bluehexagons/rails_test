@@ -4,8 +4,12 @@ one:
   kind: MyString
   count: 1
   user: one
+  created_time: <%= Time.now %>
+  modified_time: <%= Time.now %>
 
 two:
   kind: MyString
   count: 1
   user: two
+  created_time: <%= Time.now %>
+  modified_time: <%= Time.now %>
