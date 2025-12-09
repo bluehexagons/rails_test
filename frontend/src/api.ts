@@ -2,7 +2,7 @@ import axios, { InternalAxiosRequestConfig } from 'axios';
 import { authStore } from './store';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: import.meta.env.VITE_API_URL || '//localhost:3000',
 });
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
