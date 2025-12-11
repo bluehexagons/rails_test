@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_05_212331) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_11_205459) do
   create_table "entities", force: :cascade do |t|
     t.integer "count"
     t.datetime "created_at", null: false
@@ -28,7 +28,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_05_212331) do
     t.string "email"
     t.string "password_digest"
     t.datetime "updated_at", null: false
+    t.string "username", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
   add_foreign_key "entities", "users"

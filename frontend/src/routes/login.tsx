@@ -8,7 +8,7 @@ export const Route = createFileRoute('/login')({
 })
 
 function Login() {
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate()
@@ -17,11 +17,11 @@ function Login() {
     e.preventDefault()
     setError('')
     try {
-      const response = await api.post('/auth/login', { email, password })
+      const response = await api.post('/auth/login', { username, password })
       setToken(response.data.token)
       navigate({ to: '/dashboard' })
     } catch (err) {
-      setError('Invalid email or password')
+      setError('Invalid username or password')
     }
   }
 
@@ -32,12 +32,12 @@ function Login() {
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label className="form-label">Email:</label>
+            <label className="form-label">Username or Email:</label>
             <input
               className="form-input"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>

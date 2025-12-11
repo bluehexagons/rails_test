@@ -87,56 +87,62 @@ function Dashboard() {
 
   return (
     <div className="container">
-      <h1>Dashboard</h1>
       <div className="card">
-        <h2>Welcome, {user.email}!</h2>
-        <p>You are successfully logged in.</p>
-        <p><strong>User ID:</strong> {user.id}</p>
-        <p><strong>Account Created:</strong> {new Date(user.created_at).toLocaleDateString()}</p>
-        
-        <div className="card" style={{ marginTop: '20px', backgroundColor: 'var(--bg-color)' }}>
-          <h3>Click Counter</h3>
-          <p>Current Count: <strong>{click_count ? click_count.count : 0}</strong></p>
-          {click_count?.created_time && <p>Created: {new Date(click_count.created_time).toLocaleString()}</p>}
-          {click_count?.modified_time && <p>Last Modified: {new Date(click_count.modified_time).toLocaleString()}</p>}
-          
-          {streak_counter_day && streak_counter_day.count > 1 && (
-            <div style={{ marginTop: '10px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}>
-              <h4>Daily Streak 🔥</h4>
-              <p>Current Streak: <strong>{streak_counter_day.count} days</strong></p>
-            </div>
-          )}
-
-          {streak_counter_month && streak_counter_month.count > 1 && (
-            <div style={{ marginTop: '10px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}>
-              <h4>Monthly Streak 📅</h4>
-              <p>Current Streak: <strong>{streak_counter_month.count} months</strong></p>
-            </div>
-          )}
-
-          {streak_counter_year && streak_counter_year.count > 1 && (
-            <div style={{ marginTop: '10px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}>
-              <h4>Yearly Streak 🗓️</h4>
-              <p>Current Streak: <strong>{streak_counter_year.count} years</strong></p>
-            </div>
-          )}
-
-          <button
-            onClick={handleIncrement}
-            className="btn btn-primary"
-            style={{ marginTop: '10px' }}
-          >
-            Increment Count
-          </button>
+        <div className="game-header">
+          <h1>Minimal Clicker</h1>
+          <p>Hello, {user.username}</p>
         </div>
 
-        <button 
-          onClick={handleLogout}
-          className="btn btn-danger"
-          style={{ marginTop: '20px' }}
+        <div className="game-stats">
+          <div className="stat-box">
+            <div className="stat-label">Score</div>
+            <div className="stat-value">{click_count?.count ?? "..."}</div>
+          </div>
+        </div>
+
+        <button
+          onClick={handleIncrement}
+          className="btn btn-primary click-button"
         >
-          Logout
+          Click!
         </button>
+
+        {(streak_counter_day || streak_counter_month || streak_counter_year) && (
+          <div className="streak-container">
+            {streak_counter_day && streak_counter_day.count > 1 && (
+              <div className="streak-badge">
+                <h4>Daily Streak 🔥</h4>
+                <p>Current Streak: <strong>{streak_counter_day.count} days</strong></p>
+              </div>
+            )}
+
+            {streak_counter_month && streak_counter_month.count > 1 && (
+              <div className="streak-badge">
+                <h4>Monthly Streak</h4>
+                <p>Current Streak: <strong>{streak_counter_month.count} months</strong></p>
+              </div>
+            )}
+
+            {streak_counter_year && streak_counter_year.count > 1 && (
+              <div className="streak-badge">
+                <h4>Yearly Streak️</h4>
+                <p>Current Streak: <strong>{streak_counter_year.count} years</strong></p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {click_count?.modified_time && (
+          <div className="timestamp-info">
+            Last click: {new Date(click_count.modified_time).toLocaleString()}
+          </div>
+        )}
+
+        <div className="game-actions">
+          <button onClick={handleLogout} className="btn btn-danger">
+            Logout
+          </button>
+        </div>
       </div>
     </div>
   )

@@ -2,7 +2,8 @@ import { Store } from '@tanstack/store';
 
 export interface User {
   id: number;
-  email: string;
+  email: string | null;
+  username: string;
   created_at: string;
   updated_at: string;
 }

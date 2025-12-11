@@ -8,6 +8,7 @@ export const Route = createFileRoute('/signup')({
 })
 
 function Signup() {
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
@@ -19,6 +20,7 @@ function Signup() {
     setError('')
     try {
       const response = await api.post('/auth/signup', { 
+        username,
         email, 
         password,
         password_confirmation: passwordConfirmation
@@ -37,13 +39,22 @@ function Signup() {
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSignup}>
           <div className="form-group">
-            <label className="form-label">Email:</label>
+            <label className="form-label">Username:</label>
+            <input
+              className="form-input"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Email (Optional):</label>
             <input
               className="form-input"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
             />
           </div>
           <div className="form-group">
