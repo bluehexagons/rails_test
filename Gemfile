@@ -50,3 +50,5 @@ group :development, :test do
 end
 
 gem "jwt", "~> 3.1"
+
+gem "rack-attack", "~> 6.8"
