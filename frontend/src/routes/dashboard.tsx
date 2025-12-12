@@ -3,9 +3,11 @@ import { useStore } from '@tanstack/react-store'
 import { useEffect, useState } from 'react'
 import { authStore, setToken, setUser } from '../store'
 import api from '../api'
+import { Button } from '../components/Button'
+import { ClickButton } from '../components/ClickButton'
 
 export const Route = createFileRoute('/dashboard')({
-  beforeLoad: ({ context }) => {
+  beforeLoad: ({}) => {
     if (!authStore.state.isAuthenticated) {
       throw redirect({
         to: '/login',
@@ -100,12 +102,9 @@ function Dashboard() {
           </div>
         </div>
 
-        <button
-          onClick={handleIncrement}
-          className="btn btn-primary click-button"
-        >
+        <ClickButton onClick={handleIncrement}>
           Click!
-        </button>
+        </ClickButton>
 
         {(streak_counter_day || streak_counter_month || streak_counter_year) && (
           <div className="streak-container">
@@ -139,9 +138,9 @@ function Dashboard() {
         )}
 
         <div className="game-actions">
-          <button onClick={handleLogout} className="btn btn-danger">
+          <Button onClick={handleLogout} variant="danger">
             Logout
-          </button>
+          </Button>
         </div>
 
         {user.admin && <AdminPanel />}
@@ -183,9 +182,9 @@ function AdminPanel() {
           Fetch User Entities
         </label>
       </div>
-      <button onClick={fetchStats} className="btn btn-secondary" disabled={loading}>
+      <Button onClick={fetchStats} variant="secondary" disabled={loading}>
         {loading ? 'Loading...' : 'Fetch Stats'}
-      </button>
+      </Button>
       {error && <p className="error-message">{error}</p>}
       {stats && (
         <div className="stats-display" style={{ marginTop: '1rem', textAlign: 'left' }}>

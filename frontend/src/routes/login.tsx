@@ -4,6 +4,7 @@ import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
 import api from '../api'
 import { setToken, authStore } from '../store'
+import { Button } from '../components/Button'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: () => {
@@ -116,9 +117,9 @@ function Login() {
           <form.Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting]}
             children={([canSubmit, isSubmitting]) => (
-              <button type="submit" className="btn btn-primary btn-block" disabled={!canSubmit}>
+              <Button type="submit" variant="primary" block disabled={!canSubmit}>
                 {isSubmitting ? 'Logging in...' : 'Login'}
-              </button>
+              </Button>
             )}
           />
         </form>

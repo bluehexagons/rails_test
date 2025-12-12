@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useStore } from '@tanstack/react-store'
 import { authStore } from '../store'
+import { Button } from '../components/Button'
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -8,6 +9,7 @@ export const Route = createFileRoute('/')({
 
 function Index() {
   const { isAuthenticated } = useStore(authStore)
+  const navigate = useNavigate()
 
   return (
     <div className="container text-center">
@@ -17,21 +19,21 @@ function Index() {
           <>
             <p>Welcome back!</p>
             <div className="nav-links">
-              <Link to="/dashboard" className="btn btn-primary">
+              <Button variant="primary" onClick={() => navigate({ to: '/dashboard' })}>
                 Go to Dashboard
-              </Link>
+              </Button>
             </div>
           </>
         ) : (
           <>
             <p>Login to start playing.</p>
             <div className="nav-links">
-              <Link to="/login" className="btn btn-primary">
+              <Button variant="primary" onClick={() => navigate({ to: '/login' })}>
                 Login
-              </Link>
-              <Link to="/signup" className="btn btn-success">
+              </Button>
+              <Button variant="success" onClick={() => navigate({ to: '/signup' })}>
                 Sign Up
-              </Link>
+              </Button>
             </div>
           </>
         )}
