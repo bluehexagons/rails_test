@@ -196,7 +196,7 @@ function AdminPanel() {
               <li key={u.id}>
                 {u.username} ({u.email || 'No email'}) - {new Date(u.created_at).toLocaleDateString()}
                 {u.entities && u.entities.length > 0 && (
-                  <ul style={{ fontSize: '0.9em', color: '#666', marginTop: '0.25rem' }}>
+                  <ul style={{ fontSize: '0.9em', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
                     {u.entities.map((e: any) => (
                       <li key={e.id}>{e.kind}: {e.count}</li>
                     ))}
