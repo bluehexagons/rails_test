@@ -1,86 +1,209 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState, FormEvent } from 'react'
+import { createFileRoute, useNavigate, Link, redirect } from '@tanstack/react-router'
+import { useState } from 'react'
+import { useForm } from '@tanstack/react-form'
+import { z } from 'zod'
 import api from '../api'
-import { setToken } from '../store'
+import { setToken, authStore } from '../store'
 
 export const Route = createFileRoute('/signup')({
+  beforeLoad: () => {
+    if (authStore.state.isAuthenticated) {
+      throw redirect({
+        to: '/dashboard',
+      })
+    }
+  },
   component: Signup,
 })
 
 function Signup() {
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  const handleSignup = async (e: FormEvent) => {
-    e.preventDefault()
-    setError('')
-    try {
-      const response = await api.post('/auth/signup', { 
-        username,
-        email, 
-        password,
-        password_confirmation: passwordConfirmation
-      })
-      setToken(response.data.token)
-      navigate({ to: '/dashboard' })
-    } catch (err) {
-      setError('Signup failed. Please check your inputs.')
-    }
-  }
+  const form = useForm({
+    defaultValues: {
+      username: '',
+      email: '',
+      password: '',
+      passwordConfirmation: '',
+    },
+    onSubmit: async ({ value }) => {
+      setError('')
+      try {
+        const response = await api.post('/auth/signup', { 
+          username: value.username,
+          email: value.email,
+          password: value.password,
+          password_confirmation: value.passwordConfirmation
+        })
+        setToken(response.data.token)
+        navigate({ to: '/dashboard' })
+      } catch (err) {
+        setError('Signup failed. Please check your inputs.')
+      }
+    },
+  })
 
   return (
     <div className="container" style={{ maxWidth: '400px', marginTop: '50px' }}>
       <div className="card">
         <h2 className="text-center">Sign Up</h2>
         {error && <div className="error-message">{error}</div>}
-        <form onSubmit={handleSignup}>
-          <div className="form-group">
-            <label className="form-label">Username:</label>
-            <input
-              className="form-input"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Email (Optional):</label>
-            <input
-              className="form-input"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Password:</label>
-            <input
-              className="form-input"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Confirm Password:</label>
-            <input
-              className="form-input"
-              type="password"
-              value={passwordConfirmation}
-              onChange={(e) => setPasswordConfirmation(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit" className="btn btn-success btn-block">
-            Sign Up
-          </button>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            form.handleSubmit()
+          }}
+        >
+          <form.Field
+            name="username"
+            validators={{
+              onChange: ({ value }) => {
+                const res = z.string().min(3, 'Username must be at least 3 characters').safeParse(value)
+                return res.success ? undefined : res.error.issues[0].message
+              }
+            }}
+            children={(field) => (
+              <div className="form-group">
+                <label htmlFor="signup-username" className="form-label">Username:</label>
+                <input
+                  id="signup-username"
+                  name="username"
+                  autoComplete="username"
+                  className="form-input"
+                  type="text"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  required
+                  aria-invalid={field.state.meta.errors.length > 0}
+                  aria-describedby={field.state.meta.errors.length > 0 ? "username-error" : undefined}
+                />
+                {field.state.meta.errors.length > 0 && (
+                  <div id="username-error" className="error-message" style={{ fontSize: '0.8em', marginTop: '0.25rem' }} role="alert">
+                    {field.state.meta.errors.join(', ')}
+                  </div>
+                )}
+              </div>
+            )}
+          />
+          <form.Field
+            name="email"
+            validators={{
+              onChange: ({ value }) => {
+                if (!value) return undefined
+                const res = z.string().email('Invalid email').safeParse(value)
+                return res.success ? undefined : res.error.issues[0].message
+              }
+            }}
+            children={(field) => (
+              <div className="form-group">
+                <label htmlFor="signup-email" className="form-label">Email (Optional):</label>
+                <input
+                  id="signup-email"
+                  name="email"
+                  autoComplete="email"
+                  className="form-input"
+                  type="email"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  aria-invalid={field.state.meta.errors.length > 0}
+                  aria-describedby={field.state.meta.errors.length > 0 ? "email-error" : undefined}
+                />
+                {field.state.meta.errors.length > 0 && (
+                  <div id="email-error" className="error-message" style={{ fontSize: '0.8em', marginTop: '0.25rem' }} role="alert">
+                    {field.state.meta.errors.join(', ')}
+                  </div>
+                )}
+              </div>
+            )}
+          />
+          <form.Field
+            name="password"
+            validators={{
+              onChange: ({ value }) => {
+                const res = z.string().min(6, 'Password must be at least 6 characters').safeParse(value)
+                return res.success ? undefined : res.error.issues[0].message
+              }
+            }}
+            children={(field) => (
+              <div className="form-group">
+                <label htmlFor="signup-password" className="form-label">Password:</label>
+                <input
+                  id="signup-password"
+                  name="password"
+                  autoComplete="new-password"
+                  className="form-input"
+                  type="password"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  required
+                  aria-invalid={field.state.meta.errors.length > 0}
+                  aria-describedby={field.state.meta.errors.length > 0 ? "password-error" : undefined}
+                />
+                {field.state.meta.errors.length > 0 && (
+                  <div id="password-error" className="error-message" style={{ fontSize: '0.8em', marginTop: '0.25rem' }} role="alert">
+                    {field.state.meta.errors.join(', ')}
+                  </div>
+                )}
+              </div>
+            )}
+          />
+          <form.Field
+            name="passwordConfirmation"
+            validators={{
+              onChangeListenTo: ['password'],
+              onChange: ({ value, fieldApi }) => {
+                if (value !== fieldApi.form.getFieldValue('password')) {
+                  return 'Passwords do not match'
+                }
+                return undefined
+              }
+            }}
+            children={(field) => (
+              <div className="form-group">
+                <label htmlFor="signup-password-confirmation" className="form-label">Confirm Password:</label>
+                <input
+                  id="signup-password-confirmation"
+                  name="passwordConfirmation"
+                  autoComplete="new-password"
+                  className="form-input"
+                  type="password"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  required
+                  aria-invalid={field.state.meta.errors.length > 0}
+                  aria-describedby={field.state.meta.errors.length > 0 ? "password-confirmation-error" : undefined}
+                />
+                {field.state.meta.errors.length > 0 && (
+                  <div id="password-confirmation-error" className="error-message" style={{ fontSize: '0.8em', marginTop: '0.25rem' }} role="alert">
+                    {field.state.meta.errors.join(', ')}
+                  </div>
+                )}
+              </div>
+            )}
+          />
+          <form.Subscribe
+            selector={(state) => [state.canSubmit, state.isSubmitting]}
+            children={([canSubmit, isSubmitting]) => (
+              <button type="submit" className="btn btn-success btn-block" disabled={!canSubmit}>
+                {isSubmitting ? 'Signing up...' : 'Sign Up'}
+              </button>
+            )}
+          />
         </form>
+        <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+          <p>
+            Already have an account? <Link to="/login">Login</Link>
+          </p>
+          <p>
+            <Link to="/">Back to Home</Link>
+          </p>
+        </div>
       </div>
     </div>
   )
