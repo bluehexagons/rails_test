@@ -143,7 +143,71 @@ function Dashboard() {
             Logout
           </button>
         </div>
+
+        {user.admin && <AdminPanel />}
       </div>
+    </div>
+  )
+}
+
+function AdminPanel() {
+  const [stats, setStats] = useState<any>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [includeEntities, setIncludeEntities] = useState(true)
+
+  const fetchStats = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const response = await api.get(`/admin/stats?include_entities=${includeEntities}`)
+      setStats(response.data)
+    } catch (err) {
+      setError('Failed to fetch stats')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="admin-panel" style={{ marginTop: '2rem', borderTop: '1px solid #ccc', paddingTop: '1rem' }}>
+      <h3>Admin Panel</h3>
+      <div style={{ marginBottom: '1rem' }}>
+        <label>
+          <input
+            type="checkbox"
+            checked={includeEntities}
+            onChange={(e) => setIncludeEntities(e.target.checked)}
+            style={{ marginRight: '0.5rem' }}
+          />
+          Fetch User Entities
+        </label>
+      </div>
+      <button onClick={fetchStats} className="btn btn-secondary" disabled={loading}>
+        {loading ? 'Loading...' : 'Fetch Stats'}
+      </button>
+      {error && <p className="error-message">{error}</p>}
+      {stats && (
+        <div className="stats-display" style={{ marginTop: '1rem', textAlign: 'left' }}>
+          <p><strong>User Count:</strong> {stats.user_count}</p>
+          <p><strong>Entity Count:</strong> {stats.entity_count}</p>
+          <h4>Recent Users:</h4>
+          <ul>
+            {stats.recent_users.map((u: any) => (
+              <li key={u.id}>
+                {u.username} ({u.email || 'No email'}) - {new Date(u.created_at).toLocaleDateString()}
+                {u.entities && u.entities.length > 0 && (
+                  <ul style={{ fontSize: '0.9em', color: '#666', marginTop: '0.25rem' }}>
+                    {u.entities.map((e: any) => (
+                      <li key={e.id}>{e.kind}: {e.count}</li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }

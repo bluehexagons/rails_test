@@ -4,6 +4,7 @@ export interface User {
   id: number;
   email: string | null;
   username: string;
+  admin: boolean;
   created_at: string;
   updated_at: string;
 }
