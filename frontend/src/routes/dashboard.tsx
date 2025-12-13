@@ -125,63 +125,67 @@ function Dashboard() {
 
   return (
     <PageContainer>
-      <div className="back-link-container">
+      <nav className="back-link-container" aria-label="Navigation">
         <Link to="/" className="back-link">
           &larr; Home
         </Link>
-      </div>
-      <div className="game-header">
+      </nav>
+      <header className="game-header">
         <h1>Minimal Clicker</h1>
-          <p>Hello, {user.username}</p>
-        </div>
+        <p>Hello, {user.username}</p>
+      </header>
 
-        <div className="game-stats">
+      <main className="game-main">
+        <section className="game-stats" aria-label="Click Statistics">
           <div className="stat-box">
-            <div className="stat-label">Score</div>
-            <div className="stat-value">{click_count?.count ?? "..."}</div>
+            <div className="stat-label">Clicks</div>
+            <div className="stat-value" aria-live="polite" aria-atomic="true">
+              {click_count?.count ?? "..."}
+            </div>
           </div>
+        </section>
+
+        <div className="click-area">
+          <ClickButton 
+            onClick={handleIncrement} 
+            disabled={isRateLimited}
+            aria-label={isRateLimited ? "Button on cooldown" : "Click to increment score"}
+            aria-disabled={isRateLimited}
+          >
+            {isRateLimited ? 'Cooldown...' : 'Click!'}
+          </ClickButton>
         </div>
 
-        <ClickButton onClick={handleIncrement} disabled={isRateLimited}>
-          {isRateLimited ? 'Cooldown...' : 'Click!'}
-        </ClickButton>
-
-        {ping !== null && (
-          <div className="ping-display">
-            Ping: {ping}ms
+        <section className="dashboard-metrics" aria-label="Performance and Streaks">
+          <div className="metric-item">
+            <span className="metric-label">Ping</span>
+            <span className="metric-value" role="status">{ping !== null ? `${ping}ms` : '--'}</span>
           </div>
-        )}
 
-        {(streak_counter_day || streak_counter_month || streak_counter_year) && (
-          <div className="streak-container">
-            {streak_counter_day && streak_counter_day.count > 1 && (
-              <div className="streak-badge">
-                <h4>Daily Streak</h4>
-                <p>Current Streak: <strong>{streak_counter_day.count} days</strong></p>
-              </div>
-            )}
-
-            {streak_counter_month && streak_counter_month.count > 1 && (
-              <div className="streak-badge">
-                <h4>Monthly Streak</h4>
-                <p>Current Streak: <strong>{streak_counter_month.count} months</strong></p>
-              </div>
-            )}
-
-            {streak_counter_year && streak_counter_year.count > 1 && (
-              <div className="streak-badge">
-                <h4>Yearly Streak️</h4>
-                <p>Current Streak: <strong>{streak_counter_year.count} years</strong></p>
-              </div>
-            )}
+          <div className="metric-item">
+            <span className="metric-label">Last Click</span>
+            <span className="metric-value">
+              {click_count?.modified_time 
+                ? new Date(click_count.modified_time).toLocaleTimeString() 
+                : '--:--:--'}
+            </span>
           </div>
-        )}
 
-        {click_count?.modified_time && (
-          <div className="timestamp-info">
-            Last click: {new Date(click_count.modified_time).toLocaleString()}
+          <div className="metric-item streaks-item">
+            <span className="metric-label">Streaks</span>
+            <div className="streaks-row">
+              <span className={`streak-pill ${streak_counter_day?.count > 1 ? 'active' : 'inactive'}`} title="Daily Streak">
+                D: <strong>{streak_counter_day?.count ?? 0}</strong>
+              </span>
+              <span className={`streak-pill ${streak_counter_month?.count > 1 ? 'active' : 'inactive'}`} title="Monthly Streak">
+                M: <strong>{streak_counter_month?.count ?? 0}</strong>
+              </span>
+              <span className={`streak-pill ${streak_counter_year?.count > 1 ? 'active' : 'inactive'}`} title="Yearly Streak">
+                Y: <strong>{streak_counter_year?.count ?? 0}</strong>
+              </span>
+            </div>
           </div>
-        )}
+        </section>
 
         <div className="game-actions">
           <Button onClick={handleLogout} variant="danger">
@@ -190,6 +194,7 @@ function Dashboard() {
         </div>
 
         {user.admin && <AdminPanel />}
+      </main>
     </PageContainer>
   )
 }
