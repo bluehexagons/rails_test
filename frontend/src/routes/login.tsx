@@ -6,6 +6,7 @@ import { z } from 'zod'
 import api, { getErrorMessage } from '../api'
 import { setToken, authStore } from '../store'
 import { Button } from '../components/Button'
+import { PageContainer } from '../components/PageContainer'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: () => {
@@ -45,9 +46,8 @@ function Login() {
   })
 
   return (
-    <div className="container" style={{ maxWidth: '400px', marginTop: '50px' }}>
-      <div className="card">
-        <h2 className="text-center">Login</h2>
+    <PageContainer style={{ maxWidth: '400px', marginTop: '50px' }}>
+      <h2 className="text-center">Login</h2>
         {error && <div className="error-message">{error}</div>}
         <form
           onSubmit={(e) => {
@@ -137,7 +137,6 @@ function Login() {
             <Link to="/">Back to Home</Link>
           </p>
         </div>
-      </div>
-    </div>
+    </PageContainer>
   )
 }

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, redirect } from '@tanstack/react-router'
+import { createFileRoute, useNavigate, redirect, Link } from '@tanstack/react-router'
 import { useStore } from '@tanstack/react-store'
 import { useEffect, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -6,6 +6,8 @@ import { authStore, setToken, setUser } from '../store'
 import api, { getErrorMessage } from '../api'
 import { Button } from '../components/Button'
 import { ClickButton } from '../components/ClickButton'
+import { PageContainer } from '../components/PageContainer'
+import './dashboard.css'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: ({}) => {
@@ -122,10 +124,14 @@ function Dashboard() {
   const { click_count, streak_counter_day, streak_counter_month, streak_counter_year } = entities
 
   return (
-    <div className="container">
-      <div className="card">
-        <div className="game-header">
-          <h1>Minimal Clicker</h1>
+    <PageContainer>
+      <div className="back-link-container">
+        <Link to="/" className="back-link">
+          &larr; Home
+        </Link>
+      </div>
+      <div className="game-header">
+        <h1>Minimal Clicker</h1>
           <p>Hello, {user.username}</p>
         </div>
 
@@ -141,7 +147,7 @@ function Dashboard() {
         </ClickButton>
 
         {ping !== null && (
-          <div style={{ textAlign: 'center', marginTop: '0.5rem', fontSize: '0.8em', color: '#666' }}>
+          <div className="ping-display">
             Ping: {ping}ms
           </div>
         )}
@@ -184,8 +190,7 @@ function Dashboard() {
         </div>
 
         {user.admin && <AdminPanel />}
-      </div>
-    </div>
+    </PageContainer>
   )
 }
 
@@ -202,15 +207,15 @@ function AdminPanel() {
   })
 
   return (
-    <div className="admin-panel" style={{ marginTop: '2rem', borderTop: '1px solid #ccc', paddingTop: '1rem' }}>
+    <div className="admin-panel">
       <h3>Admin Panel</h3>
-      <div style={{ marginBottom: '1rem' }}>
+      <div className="admin-controls">
         <label>
           <input
             type="checkbox"
             checked={includeEntities}
             onChange={(e) => setIncludeEntities(e.target.checked)}
-            style={{ marginRight: '0.5rem' }}
+            className="admin-checkbox"
           />
           Fetch User Entities
         </label>
@@ -220,7 +225,7 @@ function AdminPanel() {
       </Button>
       {error && <p className="error-message">{getErrorMessage(error)}</p>}
       {stats && (
-        <div className="stats-display" style={{ marginTop: '1rem', textAlign: 'left' }}>
+        <div className="stats-display">
           <p><strong>User Count:</strong> {stats.user_count}</p>
           <p><strong>Entity Count:</strong> {stats.entity_count}</p>
           <h4>Recent Users:</h4>
@@ -229,7 +234,7 @@ function AdminPanel() {
               <li key={u.id}>
                 {u.username} ({u.email || 'No email'}) - {new Date(u.created_at).toLocaleDateString()}
                 {u.entities && u.entities.length > 0 && (
-                  <ul style={{ fontSize: '0.9em', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                  <ul className="entity-list">
                     {u.entities.map((e) => (
                       <li key={e.id}>{e.kind}: {e.count}</li>
                     ))}

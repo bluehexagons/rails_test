@@ -6,6 +6,7 @@ import { z } from 'zod'
 import api, { getErrorMessage } from '../api'
 import { setToken, authStore } from '../store'
 import { Button } from '../components/Button'
+import { PageContainer } from '../components/PageContainer'
 
 export const Route = createFileRoute('/signup')({
   beforeLoad: () => {
@@ -52,9 +53,8 @@ function Signup() {
   })
 
   return (
-    <div className="container" style={{ maxWidth: '400px', marginTop: '50px' }}>
-      <div className="card">
-        <h2 className="text-center">Sign Up</h2>
+    <PageContainer style={{ maxWidth: '400px', marginTop: '50px' }}>
+      <h2 className="text-center">Sign Up</h2>
         {error && <div className="error-message">{error}</div>}
         <form
           onSubmit={(e) => {
@@ -202,6 +202,9 @@ function Signup() {
               </Button>
             )}
           />
+          <div style={{ fontSize: '0.8rem', textAlign: 'center', marginTop: '1rem', color: 'var(--text-secondary)' }}>
+            By signing up, you agree to our <Link to="/terms" target="_blank">Terms of Service</Link> and <Link to="/privacy" target="_blank">Privacy Policy</Link>.
+          </div>
         </form>
         <div style={{ marginTop: '1rem', textAlign: 'center' }}>
           <p>
@@ -211,7 +214,6 @@ function Signup() {
             <Link to="/">Back to Home</Link>
           </p>
         </div>
-      </div>
-    </div>
+    </PageContainer>
   )
 }

@@ -1,0 +1,120 @@
+.game-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.game-header h1 {
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.game-header p {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.game-stats {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.stat-box {
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.streak-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.streak-badge {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background-color: var(--bg-color);
+}
+
+.streak-badge h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+}
+
+.streak-badge p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.game-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.timestamp-info {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-top: 1rem;
+}
+
+/* New classes from inline styles */
+.back-link-container {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+}
+
+.back-link {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.ping-display {
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.8em;
+  color: #666;
+}
+
+.admin-panel {
+  margin-top: 2rem;
+  border-top: 1px solid #ccc;
+  padding-top: 1rem;
+}
+
+.admin-controls {
+  margin-bottom: 1rem;
+}
+
+.admin-checkbox {
+  margin-right: 0.5rem;
+}
+
+.stats-display {
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.entity-list {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}

@@ -1,0 +1,14 @@
+.footer {
+  margin-top: auto;
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
