@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   get "/entities/current", to: "entities#current"
 
   get "/admin/stats", to: "admin#stats"
+  get "/admin/users", to: "admin#users", as: :admin_users
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

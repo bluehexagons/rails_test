@@ -1,0 +1,111 @@
+.admin-panel {
+  margin-top: 2rem;
+  border-top: 1px solid #ccc;
+  padding-top: 1rem;
+}
+
+.admin-controls {
+  margin-bottom: 1rem;
+}
+
+.admin-checkbox {
+  margin-right: 0.5rem;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.stats-display {
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.admin-users {
+  margin-top: 1.25rem;
+  text-align: left;
+}
+
+.admin-users-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-page-indicator {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.admin-loading {
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+.admin-hint {
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+.admin-users-meta {
+  margin: 0.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.admin-user-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.5rem 0 0;
+}
+
+.admin-user-item {
+  padding: 0.75rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.admin-user-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1.6fr 0.8fr;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.admin-user-name {
+  font-weight: 600;
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.admin-user-email,
+.admin-user-date {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.admin-badge {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(154, 67, 255, 0.1);
+  color: var(--primary-color);
+  border: 1px solid rgba(154, 67, 255, 0.25);
+}
+
+.entity-list {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}

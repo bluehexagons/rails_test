@@ -3,9 +3,10 @@ import { useStore } from '@tanstack/react-store'
 import { useEffect, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { authStore, setToken, setUser } from '../store'
-import api, { getErrorMessage } from '../api'
+import api from '../api'
 import { Button } from '../components/Button'
 import { ClickButton } from '../components/ClickButton'
+import { AdminPanel } from '../components/AdminPanel'
 import { PageContainer } from '../components/PageContainer'
 import './dashboard.css'
 
@@ -19,26 +20,6 @@ export const Route = createFileRoute('/dashboard')({
   },
   component: Dashboard,
 })
-
-interface Entity {
-  id: number
-  kind: string
-  count: number
-  created_time: string
-  modified_time: string
-}
-
-interface UserStats {
-  user_count: number
-  entity_count: number
-  recent_users: Array<{
-    id: number
-    username: string
-    email: string
-    created_at: string
-    entities?: Entity[]
-  }>
-}
 
 function Dashboard() {
   const { user } = useStore(authStore)
@@ -200,60 +181,5 @@ function Dashboard() {
         {user.admin && <AdminPanel />}
       </main>
     </PageContainer>
-  )
-}
-
-function AdminPanel() {
-  const [includeEntities, setIncludeEntities] = useState(true)
-
-  const { data: stats, error, isFetching, refetch } = useQuery<UserStats>({
-    queryKey: ['admin', 'stats', includeEntities],
-    queryFn: async () => {
-      const response = await api.get(`/admin/stats?include_entities=${includeEntities}`)
-      return response.data
-    },
-    enabled: false,
-  })
-
-  return (
-    <div className="admin-panel">
-      <h3>Admin Panel</h3>
-      <div className="admin-controls">
-        <label>
-          <input
-            type="checkbox"
-            checked={includeEntities}
-            onChange={(e) => setIncludeEntities(e.target.checked)}
-            className="admin-checkbox"
-          />
-          Fetch User Entities
-        </label>
-      </div>
-      <Button onClick={() => refetch()} variant="secondary" disabled={isFetching}>
-        {isFetching ? 'Loading...' : 'Fetch Stats'}
-      </Button>
-      {error && <p className="error-message">{getErrorMessage(error)}</p>}
-      {stats && (
-        <div className="stats-display">
-          <p><strong>User Count:</strong> {stats.user_count}</p>
-          <p><strong>Entity Count:</strong> {stats.entity_count}</p>
-          <h4>Recent Users:</h4>
-          <ul>
-            {stats.recent_users.map((u) => (
-              <li key={u.id}>
-                {u.username} ({u.email || 'No email'}) - {new Date(u.created_at).toLocaleDateString()}
-                {u.entities && u.entities.length > 0 && (
-                  <ul className="entity-list">
-                    {u.entities.map((e) => (
-                      <li key={e.id}>{e.kind}: {e.count}</li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
   )
 }
