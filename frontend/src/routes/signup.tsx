@@ -211,7 +211,7 @@ function Signup() {
             Already have an account? <Link to="/login">Login</Link>
           </p>
           <p>
-            <Link to="/">Back to Home</Link>
+            <Link to="/">Back Home</Link>
           </p>
         </div>
     </PageContainer>

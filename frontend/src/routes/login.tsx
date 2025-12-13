@@ -131,10 +131,10 @@ function Login() {
         </form>
         <div style={{ marginTop: '1rem', textAlign: 'center' }}>
           <p>
-            Don't have an account? <Link to="/signup">Sign up</Link>
+            Want an account? <Link to="/signup">Sign up</Link>
           </p>
           <p>
-            <Link to="/">Back to Home</Link>
+            <Link to="/">Back Home</Link>
           </p>
         </div>
     </PageContainer>
