@@ -11,6 +11,7 @@ export function ClickButton({ onClick, children, className = '', ...props }: Cli
   const shadowRef = useRef<HTMLDivElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const lastMousePos = useRef<{ x: number, y: number } | null>(null)
+  const dragStart = useRef<{ x: number, y: number } | null>(null)
   const [isPressed, setIsPressed] = useState(false)
 
   const updateButtonTransform = useCallback((clientX: number, clientY: number) => {
@@ -34,12 +35,17 @@ export function ClickButton({ onClick, children, className = '', ...props }: Cli
     const rotateY = taperedX * 18
     const rotateX = -taperedY * 10
 
-    const translateX = taperedX * 8
-    const translateY = taperedY * 8
+    let translateX = taperedX * 8
+    let translateY = taperedY * 8
+
+    if (isPressed && dragStart.current) {
+      translateX += (clientX - dragStart.current.x) * 0.25
+      translateY += (clientY - dragStart.current.y) * 0.25
+    }
     
     const translateZ = isPressed ? -5 : 10
 
-    const duration = '0.1s'
+    const duration = isPressed ? '0s' : '0.15s'
     buttonRef.current.style.transition = `transform ${duration} ease-out`
     buttonRef.current.style.transform = `scale(var(--button-scale, 1)) translate3d(${translateX}px, ${translateY}px, ${translateZ}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
 
@@ -65,6 +71,22 @@ export function ClickButton({ onClick, children, className = '', ...props }: Cli
     updateButtonTransform(e.clientX, e.clientY)
   }
 
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (props.disabled) return
+    const touch = e.touches[0]
+    lastMousePos.current = { x: touch.clientX, y: touch.clientY }
+    updateButtonTransform(touch.clientX, touch.clientY)
+  }
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (props.disabled) return
+    setIsPressed(true)
+    const touch = e.touches[0]
+    lastMousePos.current = { x: touch.clientX, y: touch.clientY }
+    dragStart.current = { x: touch.clientX, y: touch.clientY }
+    updateButtonTransform(touch.clientX, touch.clientY)
+  }
+
   useEffect(() => {
     if (lastMousePos.current && !props.disabled) {
       updateButtonTransform(lastMousePos.current.x, lastMousePos.current.y)
@@ -73,6 +95,7 @@ export function ClickButton({ onClick, children, className = '', ...props }: Cli
 
   const handleMouseLeave = () => {
     if (!buttonRef.current) return
+    dragStart.current = null
     lastMousePos.current = null
     setIsPressed(false)
     
@@ -87,14 +110,27 @@ export function ClickButton({ onClick, children, className = '', ...props }: Cli
     }
   }
 
+  const handleTouchEnd = () => {
+    setIsPressed(false)
+    handleMouseLeave()
+  }
+
   return (
-    <div 
+    <div
       ref={wrapperRef}
       className={`click-button-wrapper ${props.disabled ? 'disabled' : ''}`}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onMouseDown={() => !props.disabled && setIsPressed(true)}
+      onMouseDown={(e) => {
+        if (!props.disabled) {
+          setIsPressed(true)
+          dragStart.current = { x: e.clientX, y: e.clientY }
+        }
+      }}
       onMouseUp={() => setIsPressed(false)}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       style={{ opacity: props.disabled ? 0.6 : 1, cursor: props.disabled ? 'not-allowed' : 'pointer' }}
     >
       <button
