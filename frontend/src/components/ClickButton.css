@@ -13,6 +13,11 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.click-button-wrapper.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .click-button-animated {
   position: relative;
   width: 100%;

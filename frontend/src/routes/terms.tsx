@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useEffect } from 'react'
 import { PageContainer } from '../components/PageContainer'
 
 export const Route = createFileRoute('/terms')({
@@ -6,6 +7,10 @@ export const Route = createFileRoute('/terms')({
 })
 
 function Terms() {
+  useEffect(() => {
+    document.title = 'Terms of Service - Minimal Clicker'
+  }, [])
+
   return (
     <PageContainer>
       <h1>Terms of Service</h1>

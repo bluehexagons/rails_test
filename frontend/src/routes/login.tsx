@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link, redirect } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from '@tanstack/react-form'
 import { useMutation } from '@tanstack/react-query'
 import { z } from 'zod'
@@ -22,6 +22,10 @@ export const Route = createFileRoute('/login')({
 function Login() {
   const [error, setError] = useState('')
   const navigate = useNavigate()
+
+  useEffect(() => {
+    document.title = 'Login - Minimal Clicker'
+  }, [])
 
   const mutation = useMutation({
     mutationFn: (data: any) => api.post('/auth/login', data),
@@ -46,7 +50,7 @@ function Login() {
   })
 
   return (
-    <PageContainer style={{ maxWidth: '400px', marginTop: '50px' }}>
+    <PageContainer className="auth-container">
       <h2 className="text-center">Login</h2>
         {error && <div className="error-message">{error}</div>}
         <form
@@ -81,7 +85,7 @@ function Login() {
                   aria-describedby={field.state.meta.errors.length > 0 ? "username-error" : undefined}
                 />
                 {field.state.meta.errors.length > 0 && (
-                  <div id="username-error" className="error-message" style={{ fontSize: '0.8em', marginTop: '0.25rem' }} role="alert">
+                  <div id="username-error" className="error-message field-error" role="alert">
                     {field.state.meta.errors.join(', ')}
                   </div>
                 )}
@@ -113,7 +117,7 @@ function Login() {
                   aria-describedby={field.state.meta.errors.length > 0 ? "password-error" : undefined}
                 />
                 {field.state.meta.errors.length > 0 && (
-                  <div id="password-error" className="error-message" style={{ fontSize: '0.8em', marginTop: '0.25rem' }} role="alert">
+                  <div id="password-error" className="error-message field-error" role="alert">
                     {field.state.meta.errors.join(', ')}
                   </div>
                 )}
@@ -129,7 +133,7 @@ function Login() {
             )}
           />
         </form>
-        <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+        <div className="auth-links">
           <p>
             Want an account? <Link to="/signup">Sign up</Link>
           </p>

@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useEffect } from 'react'
 import { PageContainer } from '../components/PageContainer'
 
 export const Route = createFileRoute('/privacy')({
@@ -6,6 +7,10 @@ export const Route = createFileRoute('/privacy')({
 })
 
 function Privacy() {
+  useEffect(() => {
+    document.title = 'Privacy Policy - Minimal Clicker'
+  }, [])
+
   return (
     <PageContainer>
       <h1>Privacy Policy</h1>

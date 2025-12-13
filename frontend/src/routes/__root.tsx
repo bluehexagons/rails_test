@@ -14,7 +14,7 @@ function RootComponent() {
   return (
     <>
       {!isDashboard && !isHome && <Header />}
-      <div style={{ paddingBottom: '20px', flex: 1, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div className="root-layout">
         <Outlet />
       </div>
       <Footer />

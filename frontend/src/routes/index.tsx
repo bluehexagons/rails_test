@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useStore } from '@tanstack/react-store'
+import { useEffect } from 'react'
 import { authStore } from '../store'
 import { Button } from '../components/Button'
 import { PageContainer } from '../components/PageContainer'
+import './index.css'
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -13,6 +15,10 @@ const greetings = ['Welcome back!', 'Hi again!', 'Thanks for coming by.']
 function Index() {
   const { isAuthenticated } = useStore(authStore)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    document.title = 'Minimal Clicker'
+  }, [])
 
   return (
     <PageContainer className="text-center">
@@ -40,13 +46,13 @@ function Index() {
           </>
         )}
 
-      <div style={{ marginTop: '3rem', borderTop: '1px solid var(--border-color)', paddingTop: '2rem' }}>
+      <div className="about-section">
         <h3>About</h3>
-        <p style={{ maxWidth: '600px', margin: '0 auto 1.5rem', color: 'var(--text-secondary)' }}>
+        <p className="about-text">
           Minimal Clicker is a learning project using:
           React (frontend), Ruby on Rails (API backend), TypeScript, and various bits of TanStack.
         </p>
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+        <div className="about-links">
           <a href="https://github.com/bluehexagons/rails_test" target="_blank" rel="noopener noreferrer">
             GitHub Repository
           </a>

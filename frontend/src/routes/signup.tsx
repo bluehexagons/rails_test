@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link, redirect } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from '@tanstack/react-form'
 import { useMutation } from '@tanstack/react-query'
 import { z } from 'zod'
@@ -22,6 +22,10 @@ export const Route = createFileRoute('/signup')({
 function Signup() {
   const [error, setError] = useState('')
   const navigate = useNavigate()
+
+  useEffect(() => {
+    document.title = 'Sign Up - Minimal Clicker'
+  }, [])
 
   const mutation = useMutation({
     mutationFn: (data: any) => api.post('/auth/signup', data),
@@ -53,7 +57,7 @@ function Signup() {
   })
 
   return (
-    <PageContainer style={{ maxWidth: '400px', marginTop: '50px' }}>
+    <PageContainer className="auth-container">
       <h2 className="text-center">Sign Up</h2>
         {error && <div className="error-message">{error}</div>}
         <form
@@ -88,7 +92,7 @@ function Signup() {
                   aria-describedby={field.state.meta.errors.length > 0 ? "username-error" : undefined}
                 />
                 {field.state.meta.errors.length > 0 && (
-                  <div id="username-error" className="error-message" style={{ fontSize: '0.8em', marginTop: '0.25rem' }} role="alert">
+                  <div id="username-error" className="error-message field-error" role="alert">
                     {field.state.meta.errors.join(', ')}
                   </div>
                 )}
@@ -120,7 +124,7 @@ function Signup() {
                   aria-describedby={field.state.meta.errors.length > 0 ? "email-error" : undefined}
                 />
                 {field.state.meta.errors.length > 0 && (
-                  <div id="email-error" className="error-message" style={{ fontSize: '0.8em', marginTop: '0.25rem' }} role="alert">
+                  <div id="email-error" className="error-message field-error" role="alert">
                     {field.state.meta.errors.join(', ')}
                   </div>
                 )}
@@ -152,7 +156,7 @@ function Signup() {
                   aria-describedby={field.state.meta.errors.length > 0 ? "password-error" : undefined}
                 />
                 {field.state.meta.errors.length > 0 && (
-                  <div id="password-error" className="error-message" style={{ fontSize: '0.8em', marginTop: '0.25rem' }} role="alert">
+                  <div id="password-error" className="error-message field-error" role="alert">
                     {field.state.meta.errors.join(', ')}
                   </div>
                 )}
@@ -187,7 +191,7 @@ function Signup() {
                   aria-describedby={field.state.meta.errors.length > 0 ? "password-confirmation-error" : undefined}
                 />
                 {field.state.meta.errors.length > 0 && (
-                  <div id="password-confirmation-error" className="error-message" style={{ fontSize: '0.8em', marginTop: '0.25rem' }} role="alert">
+                  <div id="password-confirmation-error" className="error-message field-error" role="alert">
                     {field.state.meta.errors.join(', ')}
                   </div>
                 )}
@@ -202,11 +206,11 @@ function Signup() {
               </Button>
             )}
           />
-          <div style={{ fontSize: '0.8rem', textAlign: 'center', marginTop: '1rem', color: 'var(--text-secondary)' }}>
+          <div className="auth-terms">
             By signing up, you agree to our <Link to="/terms" target="_blank">Terms of Service</Link> and <Link to="/privacy" target="_blank">Privacy Policy</Link>.
           </div>
         </form>
-        <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+        <div className="auth-links">
           <p>
             Already have an account? <Link to="/login">Login</Link>
           </p>

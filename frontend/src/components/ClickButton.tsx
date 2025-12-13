@@ -131,7 +131,6 @@ export function ClickButton({ onClick, children, className = '', ...props }: Cli
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      style={{ opacity: props.disabled ? 0.6 : 1, cursor: props.disabled ? 'not-allowed' : 'pointer' }}
     >
       <button
         ref={buttonRef}

@@ -71,6 +71,10 @@ function Dashboard() {
     }
   }, [userError, navigate])
 
+  useEffect(() => {
+    document.title = 'Dashboard - Minimal Clicker'
+  }, [])
+
   const { data: entities } = useQuery({
     queryKey: ['entities'],
     queryFn: async () => {

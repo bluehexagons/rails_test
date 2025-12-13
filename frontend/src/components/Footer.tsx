@@ -6,7 +6,7 @@ export function Footer() {
     <footer className="footer">
       <div>
         &copy; {new Date().getFullYear()} <a href="https://github.com/bluehexagons" target="_blank" rel="noopener noreferrer">bluehexagons</a>
-        <span style={{ margin: '0 0.5rem' }}>|</span>
+        <span className="footer-separator">|</span>
         Licensed under Apache 2.0
       </div>
       <div className="footer-links">
