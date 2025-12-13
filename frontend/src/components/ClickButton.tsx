@@ -28,25 +28,21 @@ export function ClickButton({ onClick, children, className = '', ...props }: Cli
 
     const normX = Math.max(-1, Math.min(1, deltaX / centerX))
     const normY = Math.max(-1, Math.min(1, deltaY / centerY))
-    const taperedX = Math.sin(normX * Math.PI)
-    const taperedY = Math.sin(normY * Math.PI)
+    const taperedX = Math.sin((normX ** 3) * Math.PI)
+    const taperedY = Math.sin((normY ** 3) * Math.PI)
 
-    const rotateY = taperedX * 8
-    const rotateX = -taperedY * 8
+    const rotateY = taperedX * 18
+    const rotateX = -taperedY * 10
 
-    const translateX = taperedX * 6
-    const translateY = taperedY * 6
+    const translateX = taperedX * 8
+    const translateY = taperedY * 8
     
-    // Z-Axis translation
-    // Hover: +10px (outward)
-    // Pressed: -5px (inward relative to base, so 15px diff from hover)
     const translateZ = isPressed ? -5 : 10
 
     const duration = '0.1s'
     buttonRef.current.style.transition = `transform ${duration} ease-out`
     buttonRef.current.style.transform = `scale(var(--button-scale, 1)) translate3d(${translateX}px, ${translateY}px, ${translateZ}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
 
-    // Lighting effect
     const lighting = taperedX - taperedY
     
     if (sheenRef.current && shadowRef.current) {
@@ -54,11 +50,9 @@ export function ClickButton({ onClick, children, className = '', ...props }: Cli
       shadowRef.current.style.transition = `opacity ${duration} ease-out`
       
       if (lighting > 0) {
-        // Lit
         sheenRef.current.style.opacity = Math.min(1, lighting * 0.5).toString()
         shadowRef.current.style.opacity = '0'
       } else {
-        // Shadowed
         sheenRef.current.style.opacity = '0'
         shadowRef.current.style.opacity = Math.min(1, -lighting * 0.5).toString()
       }
@@ -66,15 +60,16 @@ export function ClickButton({ onClick, children, className = '', ...props }: Cli
   }, [isPressed])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (props.disabled) return
     lastMousePos.current = { x: e.clientX, y: e.clientY }
     updateButtonTransform(e.clientX, e.clientY)
   }
 
   useEffect(() => {
-    if (lastMousePos.current) {
+    if (lastMousePos.current && !props.disabled) {
       updateButtonTransform(lastMousePos.current.x, lastMousePos.current.y)
     }
-  }, [isPressed, updateButtonTransform])
+  }, [isPressed, updateButtonTransform, props.disabled])
 
   const handleMouseLeave = () => {
     if (!buttonRef.current) return
@@ -95,11 +90,12 @@ export function ClickButton({ onClick, children, className = '', ...props }: Cli
   return (
     <div 
       ref={wrapperRef}
-      className="click-button-wrapper"
+      className={`click-button-wrapper ${props.disabled ? 'disabled' : ''}`}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onMouseDown={() => setIsPressed(true)}
+      onMouseDown={() => !props.disabled && setIsPressed(true)}
       onMouseUp={() => setIsPressed(false)}
+      style={{ opacity: props.disabled ? 0.6 : 1, cursor: props.disabled ? 'not-allowed' : 'pointer' }}
     >
       <button
         ref={buttonRef}

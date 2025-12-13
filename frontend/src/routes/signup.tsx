@@ -1,8 +1,9 @@
 import { createFileRoute, useNavigate, Link, redirect } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from '@tanstack/react-form'
+import { useMutation } from '@tanstack/react-query'
 import { z } from 'zod'
-import api from '../api'
+import api, { getErrorMessage } from '../api'
 import { setToken, authStore } from '../store'
 import { Button } from '../components/Button'
 
@@ -21,6 +22,17 @@ function Signup() {
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
+  const mutation = useMutation({
+    mutationFn: (data: any) => api.post('/auth/signup', data),
+    onSuccess: (response) => {
+      setToken(response.data.token)
+      navigate({ to: '/dashboard' })
+    },
+    onError: (err) => {
+      setError(getErrorMessage(err))
+    }
+  })
+
   const form = useForm({
     defaultValues: {
       username: '',
@@ -30,18 +42,12 @@ function Signup() {
     },
     onSubmit: async ({ value }) => {
       setError('')
-      try {
-        const response = await api.post('/auth/signup', { 
-          username: value.username,
-          email: value.email,
-          password: value.password,
-          password_confirmation: value.passwordConfirmation
-        })
-        setToken(response.data.token)
-        navigate({ to: '/dashboard' })
-      } catch (err) {
-        setError('Signup failed. Please check your inputs.')
-      }
+      await mutation.mutateAsync({ 
+        username: value.username,
+        email: value.email,
+        password: value.password,
+        password_confirmation: value.passwordConfirmation
+      })
     },
   })
 

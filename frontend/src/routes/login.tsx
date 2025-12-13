@@ -1,8 +1,9 @@
 import { createFileRoute, useNavigate, Link, redirect } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from '@tanstack/react-form'
+import { useMutation } from '@tanstack/react-query'
 import { z } from 'zod'
-import api from '../api'
+import api, { getErrorMessage } from '../api'
 import { setToken, authStore } from '../store'
 import { Button } from '../components/Button'
 
@@ -21,6 +22,17 @@ function Login() {
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
+  const mutation = useMutation({
+    mutationFn: (data: any) => api.post('/auth/login', data),
+    onSuccess: (response) => {
+      setToken(response.data.token)
+      navigate({ to: '/dashboard' })
+    },
+    onError: (err) => {
+      setError(getErrorMessage(err))
+    }
+  })
+
   const form = useForm({
     defaultValues: {
       username: '',
@@ -28,13 +40,7 @@ function Login() {
     },
     onSubmit: async ({ value }) => {
       setError('')
-      try {
-        const response = await api.post('/auth/login', value)
-        setToken(response.data.token)
-        navigate({ to: '/dashboard' })
-      } catch (err) {
-        setError('Invalid username or password')
-      }
+      await mutation.mutateAsync(value)
     },
   })
 

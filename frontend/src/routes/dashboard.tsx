@@ -1,8 +1,9 @@
 import { createFileRoute, useNavigate, redirect } from '@tanstack/react-router'
 import { useStore } from '@tanstack/react-store'
 import { useEffect, useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { authStore, setToken, setUser } from '../store'
-import api from '../api'
+import api, { getErrorMessage } from '../api'
 import { Button } from '../components/Button'
 import { ClickButton } from '../components/ClickButton'
 
@@ -25,59 +26,92 @@ interface Entity {
   modified_time: string
 }
 
+interface UserStats {
+  user_count: number
+  entity_count: number
+  recent_users: Array<{
+    id: number
+    username: string
+    email: string
+    created_at: string
+    entities?: Entity[]
+  }>
+}
+
 function Dashboard() {
   const { user } = useStore(authStore)
   const navigate = useNavigate()
-  const [entities, setEntities] = useState<{ 
-    click_count: Entity | null, 
-    streak_counter_day: Entity | null,
-    streak_counter_month: Entity | null,
-    streak_counter_year: Entity | null
-  }>({ 
-    click_count: null, 
-    streak_counter_day: null,
-    streak_counter_month: null,
-    streak_counter_year: null
+  const queryClient = useQueryClient()
+  const [isRateLimited, setIsRateLimited] = useState(false)
+  const [ping, setPing] = useState<number | null>(null)
+
+  const { data: userData, error: userError } = useQuery({
+    queryKey: ['me'],
+    queryFn: async () => {
+      const response = await api.get('/me')
+      return response.data
+    },
+    retry: false,
+    enabled: !user, // Only fetch if we don't have the user yet (or to validate session)
   })
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await api.get('/me')
-        setUser(response.data)
-      } catch (error) {
-        console.error('Failed to fetch user', error)
-        setToken(null) // Logout if token is invalid
-        navigate({ to: '/login' })
+    if (userData) {
+      setUser(userData)
+    }
+  }, [userData])
+
+  useEffect(() => {
+    if (userError) {
+      console.error('Failed to fetch user', userError)
+      setToken(null)
+      navigate({ to: '/login' })
+    }
+  }, [userError, navigate])
+
+  const { data: entities } = useQuery({
+    queryKey: ['entities'],
+    queryFn: async () => {
+      const response = await api.get('/entities/current')
+      return response.data
+    },
+    initialData: {
+      click_count: null,
+      streak_counter_day: null,
+      streak_counter_month: null,
+      streak_counter_year: null
+    }
+  })
+
+  const incrementMutation = useMutation({
+    mutationFn: async () => {
+      const start = performance.now()
+      const response = await api.post('/entities/increment')
+      const end = performance.now()
+      setPing(Math.round(end - start))
+      return response
+    },
+    onSuccess: (response) => {
+      queryClient.setQueryData(['entities'], response.data)
+    },
+    onError: (error: any) => {
+      console.error('Failed to increment count', error)
+      if (error.response && error.response.status === 429) {
+        setIsRateLimited(true)
+        setTimeout(() => setIsRateLimited(false), 2000)
       }
     }
-
-    const fetchEntities = async () => {
-      try {
-        const response = await api.get('/entities/current')
-        setEntities(response.data)
-      } catch (error) {
-        console.error('Failed to fetch entities', error)
-      }
-    }
-
-    if (!user) {
-      fetchUser()
-    }
-    fetchEntities()
-  }, [user, navigate])
+  })
 
   const handleLogout = () => {
     setToken(null)
+    queryClient.clear()
     navigate({ to: '/' })
   }
 
-  const handleIncrement = async () => {
-    try {
-      const response = await api.post('/entities/increment')
-      setEntities(response.data)
-    } catch (error) {
-      console.error('Failed to increment count', error)
+  const handleIncrement = () => {
+    if (!isRateLimited) {
+      incrementMutation.mutate()
     }
   }
 
@@ -102,15 +136,21 @@ function Dashboard() {
           </div>
         </div>
 
-        <ClickButton onClick={handleIncrement}>
-          Click!
+        <ClickButton onClick={handleIncrement} disabled={isRateLimited}>
+          {isRateLimited ? 'Cooldown...' : 'Click!'}
         </ClickButton>
+
+        {ping !== null && (
+          <div style={{ textAlign: 'center', marginTop: '0.5rem', fontSize: '0.8em', color: '#666' }}>
+            Ping: {ping}ms
+          </div>
+        )}
 
         {(streak_counter_day || streak_counter_month || streak_counter_year) && (
           <div className="streak-container">
             {streak_counter_day && streak_counter_day.count > 1 && (
               <div className="streak-badge">
-                <h4>Daily Streak 🔥</h4>
+                <h4>Daily Streak</h4>
                 <p>Current Streak: <strong>{streak_counter_day.count} days</strong></p>
               </div>
             )}
@@ -150,23 +190,16 @@ function Dashboard() {
 }
 
 function AdminPanel() {
-  const [stats, setStats] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
   const [includeEntities, setIncludeEntities] = useState(true)
 
-  const fetchStats = async () => {
-    setLoading(true)
-    setError('')
-    try {
+  const { data: stats, error, isFetching, refetch } = useQuery<UserStats>({
+    queryKey: ['admin', 'stats', includeEntities],
+    queryFn: async () => {
       const response = await api.get(`/admin/stats?include_entities=${includeEntities}`)
-      setStats(response.data)
-    } catch (err) {
-      setError('Failed to fetch stats')
-    } finally {
-      setLoading(false)
-    }
-  }
+      return response.data
+    },
+    enabled: false,
+  })
 
   return (
     <div className="admin-panel" style={{ marginTop: '2rem', borderTop: '1px solid #ccc', paddingTop: '1rem' }}>
@@ -182,22 +215,22 @@ function AdminPanel() {
           Fetch User Entities
         </label>
       </div>
-      <Button onClick={fetchStats} variant="secondary" disabled={loading}>
-        {loading ? 'Loading...' : 'Fetch Stats'}
+      <Button onClick={() => refetch()} variant="secondary" disabled={isFetching}>
+        {isFetching ? 'Loading...' : 'Fetch Stats'}
       </Button>
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className="error-message">{getErrorMessage(error)}</p>}
       {stats && (
         <div className="stats-display" style={{ marginTop: '1rem', textAlign: 'left' }}>
           <p><strong>User Count:</strong> {stats.user_count}</p>
           <p><strong>Entity Count:</strong> {stats.entity_count}</p>
           <h4>Recent Users:</h4>
           <ul>
-            {stats.recent_users.map((u: any) => (
+            {stats.recent_users.map((u) => (
               <li key={u.id}>
                 {u.username} ({u.email || 'No email'}) - {new Date(u.created_at).toLocaleDateString()}
                 {u.entities && u.entities.length > 0 && (
                   <ul style={{ fontSize: '0.9em', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
-                    {u.entities.map((e: any) => (
+                    {u.entities.map((e) => (
                       <li key={e.id}>{e.kind}: {e.count}</li>
                     ))}
                   </ul>

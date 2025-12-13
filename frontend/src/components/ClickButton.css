@@ -57,16 +57,18 @@
 }
 
 .click-button-sheen {
-  border: 2px solid rgb(58, 31, 56);
+  border: 6px solid rgb(58, 31, 56);
   top: unset;
-  bottom: 0;
+  bottom: -4px;
+  left: -2px;
   background: linear-gradient(190deg, rgba(255, 230, 240, 0.3) 0%, transparent 60%);
 }
 
 .click-button-shadow {
-  border: 2px solid rgb(255, 144, 246);
+  border: 6px solid rgb(255, 144, 246);
   left: unset;
-  right: 0;
+  top: -4px;
+  right: -2px;
   background: linear-gradient(30deg, rgba(0, 0, 0, 0.5) 0%, transparent 60%);
 }
 

@@ -25,7 +25,7 @@ class AdminController < ApplicationController
 
   def authorize_admin
     unless @current_user&.admin?
-      render json: { error: "Unauthorized" }, status: :forbidden
+      render json: { error: "You do not have permission to access this resource" }, status: :forbidden
     end
   end
 end
