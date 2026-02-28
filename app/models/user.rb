@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
   has_many :entities, dependent: :destroy
+  has_many :refresh_tokens, dependent: :delete_all
 
   before_validation :normalize_email
 

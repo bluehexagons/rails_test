@@ -1,7 +1,8 @@
 class JsonWebToken
   SECRET_KEY = Rails.application.credentials.secret_key_base.to_s
 
-  def self.encode(payload, exp = 24.hours.from_now)
+  # Default: short-lived access token (1 hour). Callers may pass a custom `exp` for longer lifetimes.
+  def self.encode(payload, exp = 1.hour.from_now)
     payload[:exp] = exp.to_i
     JWT.encode(payload, SECRET_KEY)
   end

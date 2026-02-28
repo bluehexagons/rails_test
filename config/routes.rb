@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   post "/auth/login", to: "authentication#login"
   delete "/auth/logout", to: "authentication#logout"
+  post "/auth/refresh", to: "authentication#refresh"
   post "/auth/signup", to: "users#create"
   get "/me", to: "users#me"
 
