@@ -13,7 +13,7 @@ export const Route = createFileRoute('/')({
 const greetings = ['Welcome back!', 'Hi again!', 'Thanks for coming by.']
 
 function Index() {
-  const { isAuthenticated } = useStore(authStore)
+  const isAuthenticated = useStore(authStore, (state) => state.isAuthenticated)
   const navigate = useNavigate()
 
   useEffect(() => {

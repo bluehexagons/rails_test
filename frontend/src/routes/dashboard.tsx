@@ -22,7 +22,7 @@ export const Route = createFileRoute('/dashboard')({
 })
 
 function Dashboard() {
-  const { user } = useStore(authStore)
+  const user = useStore(authStore, (state) => state.user)
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [isRateLimited, setIsRateLimited] = useState(false)
