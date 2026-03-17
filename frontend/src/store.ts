@@ -24,9 +24,10 @@ export const authStore = new Store<AuthState>({
 });
 
 export const setToken = (token: string | null, refreshToken?: string | null) => {
+  const hasRefreshToken = refreshToken !== undefined;
   if (token) {
     localStorage.setItem('token', token);
-    if (arguments.length > 1) {
+    if (hasRefreshToken) {
       if (refreshToken) {
         localStorage.setItem('refreshToken', refreshToken);
       } else {
@@ -36,7 +37,7 @@ export const setToken = (token: string | null, refreshToken?: string | null) => 
     authStore.setState((state) => ({
       ...state,
       token,
-      refreshToken: arguments.length > 1 ? refreshToken : state.refreshToken,
+      refreshToken: hasRefreshToken ? refreshToken : state.refreshToken,
       isAuthenticated: true,
     }));
   } else {
