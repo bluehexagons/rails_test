@@ -1,0 +1,23 @@
+one:
+  user: one
+  token_digest: <%= RefreshToken.digest_token("valid_token_1") %>
+  expires_at: <%= 60.days.from_now %>
+  revoked: false
+
+two:
+  user: two
+  token_digest: <%= RefreshToken.digest_token("valid_token_2") %>
+  expires_at: <%= 60.days.from_now %>
+  revoked: false
+
+revoked:
+  user: one
+  token_digest: <%= RefreshToken.digest_token("revoked_token") %>
+  expires_at: <%= 60.days.from_now %>
+  revoked: true
+
+expired:
+  user: two
+  token_digest: <%= RefreshToken.digest_token("expired_token") %>
+  expires_at: <%= 1.day.ago %>
+  revoked: false

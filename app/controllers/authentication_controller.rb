@@ -4,11 +4,16 @@ class AuthenticationController < ApplicationController
     identifier = params[:username] || params[:email]
     @user = User.find_by(username: identifier) || User.find_by(email: identifier)
 
-    if @user&.authenticate(params[:password])
+    # Constant-time comparison to prevent timing attacks: always run a bcrypt
+    # verification so response time does not reveal whether the user exists.
+    dummy_password = BCrypt::Password.create("dummy_password_for_timing")
+    authenticated = @user ? @user.authenticate(params[:password]) : dummy_password.is_password?("dummy_password_for_timing")
+
+    if authenticated && @user
       # Short-lived access token (1 hour) + long-lived refresh token (180 days)
       access_token = JsonWebToken.encode(user_id: @user.id)
       refresh_raw = RefreshToken.generate_for(@user)
-      time = Time.now + 1.hour.to_i
+      time = Time.current + 1.hour.to_i
       render json: { token: access_token, exp: time.strftime("%m-%d-%Y %H:%M"), username: @user.username, refresh_token: refresh_raw }, status: :ok
     else
       render json: { error: "Invalid username or password" }, status: :unauthorized
@@ -24,7 +29,7 @@ class AuthenticationController < ApplicationController
     end
 
     digest = RefreshToken.digest_token(raw)
-    rt = RefreshToken.find_by(token_digest: digest)
+    rt = RefreshToken.lock.find_by(token_digest: digest)
 
     if rt.nil? || rt.revoked? || rt.expires_at < Time.current
       return render json: { error: "Invalid or expired refresh token" }, status: :unauthorized
@@ -35,7 +40,7 @@ class AuthenticationController < ApplicationController
       rt.update!(revoked: true)
       new_raw = RefreshToken.generate_for(rt.user)
       access_token = JsonWebToken.encode(user_id: rt.user.id)
-      time = Time.now + 1.hour.to_i
+      time = Time.current + 1.hour.to_i
       render json: { token: access_token, exp: time.strftime("%m-%d-%Y %H:%M"), refresh_token: new_raw }, status: :ok
     end
   end
@@ -48,14 +53,10 @@ class AuthenticationController < ApplicationController
     if raw.present?
       digest = RefreshToken.digest_token(raw)
       rt = RefreshToken.find_by(token_digest: digest)
-      rt&.update(revoked: true)
+      rt&.update!(revoked: true)
     end
     render json: { message: "Logged out successfully" }, status: :ok
-  end
-
-  private
-
-  def login_params
-    params.permit(:email, :password, :username)
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: "Failed to revoke token", details: e.record.errors.full_messages }, status: :unprocessable_entity
   end
 end

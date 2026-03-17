@@ -8,9 +8,10 @@ class ApplicationController < ActionController::API
     begin
       @decoded = JsonWebToken.decode(header)
       @current_user = User.find(@decoded[:user_id])
-      # Optionally rotate access token on activity: not done here to keep API minimal.
     rescue ActiveRecord::RecordNotFound => e
       render json: { error: "User not found" }, status: :unauthorized
+    rescue JWT::ExpiredSignature => e
+      render json: { error: "Token has expired" }, status: :unauthorized
     rescue JWT::DecodeError => e
       render json: { error: "Invalid token" }, status: :unauthorized
     end
