@@ -5,7 +5,7 @@ class AuthenticationController < ApplicationController
     @user = User.find_by(username: identifier) || User.find_by(email: identifier)
 
     if @user&.authenticate(params[:password])
-      # Short-lived access token (1 hour) + long-lived refresh token (60 days)
+      # Short-lived access token (1 hour) + long-lived refresh token (180 days)
       access_token = JsonWebToken.encode(user_id: @user.id)
       refresh_raw = RefreshToken.generate_for(@user)
       time = Time.now + 1.hour.to_i
@@ -41,7 +41,15 @@ class AuthenticationController < ApplicationController
   end
 
   # DELETE /auth/logout
+  # Accepts an optional refresh_token in the body to revoke it directly,
+  # which works even if the access token has already expired.
   def logout
+    raw = params[:refresh_token]
+    if raw.present?
+      digest = RefreshToken.digest_token(raw)
+      rt = RefreshToken.find_by(token_digest: digest)
+      rt&.update(revoked: true)
+    end
     render json: { message: "Logged out successfully" }, status: :ok
   end
 

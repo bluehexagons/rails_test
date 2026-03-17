@@ -90,7 +90,13 @@ function Dashboard() {
     }
   })
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const refreshToken = authStore.state.refreshToken
+    try {
+      await api.delete('/auth/logout', { data: { refresh_token: refreshToken } })
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
     setToken(null)
     queryClient.clear()
     navigate({ to: '/' })
