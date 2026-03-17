@@ -30,13 +30,12 @@ class EntityTest < ActiveSupport::TestCase
   end
 
   test "should update modified_time on changes" do
-    entity = Entity.create!(user: @user, kind: "test_modified_time", count: 0)
+    entity = travel_to(1.minute.ago) { Entity.create!(user: @user, kind: "test_modified_time", count: 0) }
     original_time = entity.modified_time
 
-    sleep(0.1) # Ensure time difference
     entity.count += 1
     entity.save!
 
-    assert entity.modified_time >= original_time
+    assert entity.modified_time > original_time
   end
 end

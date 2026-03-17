@@ -3,7 +3,6 @@ require "test_helper"
 class UsersControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
-    @token = JsonWebToken.encode(user_id: @user.id)
   end
 
   test "should create user with valid params" do
@@ -61,7 +60,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get current user with valid token" do
-    get me_url, headers: { "Authorization" => "Bearer #{@token}" }
+    token = JsonWebToken.encode(user_id: @user.id)
+    get me_url, headers: { "Authorization" => "Bearer #{token}" }
     assert_response :success
 
     json_response = JSON.parse(response.body)

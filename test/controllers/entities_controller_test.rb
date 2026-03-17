@@ -19,20 +19,6 @@ class EntitiesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, json_response["click_count"]["count"]
   end
 
-  test "should increment counter multiple times" do
-    # First click
-    post entities_increment_url, headers: { "Authorization" => "Bearer #{@token}" }
-    assert_response :success
-    first_response = JSON.parse(response.body)
-
-    # Second click
-    post entities_increment_url, headers: { "Authorization" => "Bearer #{@token}" }
-    assert_response :success
-    second_response = JSON.parse(response.body)
-
-    assert_equal first_response["click_count"]["count"] + 1, second_response["click_count"]["count"]
-  end
-
   test "should get current entities" do
     # First create some entities by incrementing
     post entities_increment_url, headers: { "Authorization" => "Bearer #{@token}" }

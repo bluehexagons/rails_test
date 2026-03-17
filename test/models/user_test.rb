@@ -69,8 +69,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "should destroy associated entities when destroyed" do
-    # Create a new user specifically for this test to avoid interference from fixtures
-    user = User.create!(username: "destroy_test_user", password: "password123")
+    user = User.create!(username: "destroy_#{SecureRandom.hex(6)}", password: "password123")
     user.entities.create!(kind: "click_count", count: 5)
     assert_difference("Entity.count", -1) do
       user.destroy
@@ -78,8 +77,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "should destroy associated refresh tokens when destroyed" do
-    # Create a new user specifically for this test
-    user = User.create!(username: "destroy_test_user_2", password: "password123")
+    user = User.create!(username: "destroy_#{SecureRandom.hex(6)}", password: "password123")
     RefreshToken.create!(user: user, token_digest: "digest_test", expires_at: 1.day.from_now)
     assert_difference("RefreshToken.count", -1) do
       user.destroy
