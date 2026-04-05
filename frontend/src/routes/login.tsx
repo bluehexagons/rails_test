@@ -8,6 +8,11 @@ import { setToken, authStore } from '../store'
 import { Button } from '../components/Button'
 import { PageContainer } from '../components/PageContainer'
 
+type LoginCredentials = {
+  username: string
+  password: string
+}
+
 export const Route = createFileRoute('/login')({
   beforeLoad: () => {
     if (authStore.state.isAuthenticated) {
@@ -28,7 +33,7 @@ function Login() {
   }, [])
 
   const mutation = useMutation({
-    mutationFn: (data: any) => api.post('/auth/login', data),
+    mutationFn: (data: LoginCredentials) => api.post('/auth/login', data),
     onSuccess: (response) => {
       setToken(response.data.token, response.data.refresh_token)
       navigate({ to: '/dashboard' })

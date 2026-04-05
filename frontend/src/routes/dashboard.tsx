@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate, redirect, Link } from '@tanstack/react-ro
 import { useStore } from '@tanstack/react-store'
 import { useEffect, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { isAxiosError } from 'axios'
 import { authStore, setToken, setUser } from '../store'
 import api from '../api'
 import { Button } from '../components/Button'
@@ -81,9 +82,9 @@ function Dashboard() {
     onSuccess: (response) => {
       queryClient.setQueryData(['entities'], response.data)
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error('Failed to increment count', error)
-      if (error.response && error.response.status === 429) {
+      if (isAxiosError(error) && error.response?.status === 429) {
         setIsRateLimited(true)
         setTimeout(() => setIsRateLimited(false), 2000)
       }

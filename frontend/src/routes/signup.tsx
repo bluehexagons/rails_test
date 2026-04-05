@@ -8,6 +8,13 @@ import { setToken, authStore } from '../store'
 import { Button } from '../components/Button'
 import { PageContainer } from '../components/PageContainer'
 
+type SignupPayload = {
+  username: string
+  email: string
+  password: string
+  password_confirmation: string
+}
+
 export const Route = createFileRoute('/signup')({
   beforeLoad: () => {
     if (authStore.state.isAuthenticated) {
@@ -28,7 +35,7 @@ function Signup() {
   }, [])
 
   const mutation = useMutation({
-    mutationFn: (data: any) => api.post('/auth/signup', data),
+    mutationFn: (data: SignupPayload) => api.post('/auth/signup', data),
     onSuccess: (response) => {
       setToken(response.data.token, response.data.refresh_token)
       navigate({ to: '/dashboard' })
