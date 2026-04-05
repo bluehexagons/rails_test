@@ -64,6 +64,37 @@ class AdminController < ApplicationController
     }
   end
 
+  def export_users
+    include_entities = params[:include_entities] == "true"
+
+    scope = User.order(created_at: :desc)
+    scope = scope.includes(:entities) if include_entities
+
+    users = scope
+
+    users_json = if include_entities
+      users.as_json(
+        only: %i[id username email admin created_at updated_at],
+        include: {
+          entities: { only: %i[id kind count created_time modified_time] }
+        }
+      )
+    else
+      users.as_json(only: %i[id username email admin created_at updated_at])
+    end
+
+    export_data = {
+      exported_at: Time.current.iso8601,
+      total_users: users_json.length,
+      users: users_json
+    }
+
+    filename = "users_export_#{Time.current.strftime("%Y%m%d_%H%M%S")}.json"
+
+    response.headers["Content-Disposition"] = "attachment; filename=\"#{filename}\""
+    render json: export_data
+  end
+
   private
 
   def authorize_admin

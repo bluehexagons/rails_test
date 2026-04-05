@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
   get "/admin/stats", to: "admin#stats"
   get "/admin/users", to: "admin#users", as: :admin_users
+  get "/admin/export_users", to: "admin#export_users", as: :admin_export_users
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

@@ -80,4 +80,40 @@ class AdminControllerTest < ActionDispatch::IntegrationTest
     get admin_users_url
     assert_response :unauthorized
   end
+
+  test "should export users as admin" do
+    token = JsonWebToken.encode(user_id: @admin.id)
+    get admin_export_users_url, headers: { "Authorization" => "Bearer #{token}" }
+    assert_response :success
+
+    json_response = JSON.parse(response.body)
+    assert_includes json_response, "exported_at"
+    assert_includes json_response, "total_users"
+    assert_includes json_response, "users"
+    assert_operator json_response["total_users"], :>=, 2
+    assert_includes json_response["users"].first, "username"
+    assert_includes json_response["users"].first, "updated_at"
+  end
+
+  test "should export users with entities when requested" do
+    token = JsonWebToken.encode(user_id: @admin.id)
+    get admin_export_users_url, params: { include_entities: "true" }, headers: { "Authorization" => "Bearer #{token}" }
+    assert_response :success
+
+    json_response = JSON.parse(response.body)
+    users = json_response["users"]
+    assert_not_empty users
+    assert_includes users.first, "entities"
+  end
+
+  test "should not export users as non-admin" do
+    token = JsonWebToken.encode(user_id: @user.id)
+    get admin_export_users_url, headers: { "Authorization" => "Bearer #{token}" }
+    assert_response :forbidden
+  end
+
+  test "should not export users without login" do
+    get admin_export_users_url
+    assert_response :unauthorized
+  end
 end
