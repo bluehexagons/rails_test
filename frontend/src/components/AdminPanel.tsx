@@ -48,6 +48,8 @@ export function AdminPanel() {
   const [page, setPage] = useState(1)
   const [hasLoadedUsers, setHasLoadedUsers] = useState(false)
   const [usersRefreshKey, setUsersRefreshKey] = useState(0)
+  const [exporting, setExporting] = useState(false)
+  const [exportError, setExportError] = useState<string | null>(null)
   const perPage = 25
 
   const {
@@ -87,6 +89,36 @@ export function AdminPanel() {
     refetchStats()
   }
 
+  const handleExport = async () => {
+    setExportError(null)
+    setExporting(true)
+    try {
+      const response = await api.get(`/admin/export_users?include_entities=${includeEntities}`, {
+        responseType: 'blob',
+      })
+      const blob = new Blob([response.data], { type: 'application/json' })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      const contentDisposition = response.headers['content-disposition']
+      let filename = 'users_export.json'
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="?(.+?)"?(?:;|$)/)
+        if (match) filename = match[1]
+      }
+      link.setAttribute('download', filename)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Export failed:', error)
+      setExportError('Failed to export users. Please try again.')
+    } finally {
+      setExporting(false)
+    }
+  }
+
   return (
     <div className="admin-panel">
       <h3>Admin Panel</h3>
@@ -110,10 +142,14 @@ export function AdminPanel() {
         <Button onClick={handleFetch} variant="secondary" disabled={statsFetching}>
           {statsFetching ? 'Loading...' : 'Fetch Stats'}
         </Button>
+        <Button onClick={handleExport} variant="success" disabled={exporting}>
+          {exporting ? 'Exporting...' : 'Export Users'}
+        </Button>
       </div>
 
       {statsError && <p className="error-message">{getErrorMessage(statsError)}</p>}
       {usersError && <p className="error-message">{getErrorMessage(usersError)}</p>}
+      {exportError && <p className="error-message">{exportError}</p>}
 
       {stats && (
         <div className="stats-display">
