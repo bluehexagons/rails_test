@@ -37,7 +37,7 @@ gem "rack-cors"
 
 group :development, :test do
   # Pin minitest to 5.x for Rails 8.1 compatibility (6.x breaks line_filtering)
-  gem "minitest", "~> 5.26"
+  gem "minitest", "~> 6.0"
   # See https://guides.rubyonrails.org/debugging-rails-applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
