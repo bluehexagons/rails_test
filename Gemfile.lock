@@ -158,7 +158,9 @@ GEM
     mini_magick (5.3.1)
       logger
     mini_mime (1.1.5)
-    minitest (5.27.0)
+    minitest (6.0.6)
+      drb (~> 2.0)
+      prism (~> 1.5)
     msgpack (1.8.0)
     net-imap (0.6.4)
       date
@@ -365,7 +367,7 @@ DEPENDENCIES
   image_processing (~> 1.2)
   jwt (~> 3.1)
   kamal
-  minitest (~> 5.26)
+  minitest (~> 6.0)
   puma (>= 5.0)
   rack-attack (~> 6.8)
   rack-cors
