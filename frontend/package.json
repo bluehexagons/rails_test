@@ -20,7 +20,7 @@
     "@tanstack/store": "^0.11.0",
     "axios": "^1.16.0",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5",
+    "react-dom": "^19.2.6",
     "typescript-eslint": "^8.59.1",
     "zod": "^4.4.3"
   },
