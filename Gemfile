@@ -51,6 +51,6 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 end
 
-gem "jwt", "~> 3.1"
+gem "jwt", "~> 3.2"
 
 gem "rack-attack", "~> 6.8"
