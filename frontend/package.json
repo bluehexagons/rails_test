@@ -15,7 +15,7 @@
     "@tanstack/react-query": "^5.100.9",
     "@tanstack/react-router": "^1.169.1",
     "@tanstack/react-store": "^0.11.0",
-    "@tanstack/router-devtools": "^1.166.13",
+    "@tanstack/router-devtools": "^1.167.0",
     "@tanstack/router-plugin": "^1.167.32",
     "@tanstack/store": "^0.11.0",
     "axios": "^1.16.0",
