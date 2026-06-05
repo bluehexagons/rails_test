@@ -16,7 +16,26 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     json_response = JSON.parse(response.body)
     assert_includes json_response, "user"
     assert_includes json_response, "token"
+    assert_includes json_response, "refresh_token"
     assert_equal "unique_test_user_12345", json_response["user"]["username"]
+  end
+
+  test "should create user with top-level frontend params" do
+    assert_difference("User.count") do
+      post "/auth/signup",
+        params: {
+          username: "frontend_signup_user_12345",
+          password: "password123",
+          password_confirmation: "password123"
+        },
+        as: :json
+    end
+
+    assert_response :created
+    json_response = JSON.parse(response.body)
+    assert_includes json_response, "token"
+    assert_includes json_response, "refresh_token"
+    assert_equal "frontend_signup_user_12345", json_response["user"]["username"]
   end
 
   test "should not create user without username" do

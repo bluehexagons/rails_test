@@ -35,7 +35,7 @@ function Signup() {
   }, [])
 
   const mutation = useMutation({
-    mutationFn: (data: SignupPayload) => api.post('/auth/signup', data),
+    mutationFn: (data: SignupPayload) => api.post('/auth/signup', { user: data }),
     onSuccess: (response) => {
       setToken(response.data.token, response.data.refresh_token)
       navigate({ to: '/dashboard' })
@@ -142,7 +142,7 @@ function Signup() {
             name="password"
             validators={{
               onChange: ({ value }) => {
-                const res = z.string().min(6, 'Password must be at least 6 characters').safeParse(value)
+                const res = z.string().min(8, 'Password must be at least 8 characters').safeParse(value)
                 return res.success ? undefined : res.error.issues[0].message
               }
             }}

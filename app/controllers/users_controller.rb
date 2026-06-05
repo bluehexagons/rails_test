@@ -6,7 +6,8 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       token = JsonWebToken.encode(user_id: @user.id)
-      render json: { user: @user, token: token }, status: :created
+      refresh_raw = RefreshToken.generate_for(@user)
+      render json: { user: @user, token: token, refresh_token: refresh_raw }, status: :created
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
@@ -20,6 +21,10 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation, :username)
+    if params[:user].present?
+      params.require(:user).permit(:email, :password, :password_confirmation, :username)
+    else
+      params.permit(:email, :password, :password_confirmation, :username)
+    end
   end
 end
