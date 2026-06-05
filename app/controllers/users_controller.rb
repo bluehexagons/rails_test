@@ -21,6 +21,10 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    (params[:user].presence || params).permit(:email, :password, :password_confirmation, :username)
+    allowed_fields = %i[email password password_confirmation username]
+    nested_user_params = params.fetch(:user, {}).permit(*allowed_fields).to_h
+    top_level_params = params.permit(*allowed_fields).to_h
+
+    nested_user_params.reverse_merge(top_level_params)
   end
 end
