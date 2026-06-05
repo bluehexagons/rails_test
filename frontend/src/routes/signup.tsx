@@ -68,6 +68,10 @@ function Signup() {
       <h2 className="text-center">Sign Up</h2>
         {error && <div className="error-message">{error}</div>}
         <form
+          id="signup"
+          name="signup"
+          action="/auth/signup"
+          method="post"
           onSubmit={(e) => {
             e.preventDefault()
             e.stopPropagation()

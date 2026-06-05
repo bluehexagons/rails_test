@@ -59,6 +59,10 @@ function Login() {
       <h2 className="text-center">Login</h2>
         {error && <div className="error-message">{error}</div>}
         <form
+          id="login"
+          name="login"
+          action="/auth/login"
+          method="post"
           onSubmit={(e) => {
             e.preventDefault()
             e.stopPropagation()
