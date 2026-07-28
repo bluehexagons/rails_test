@@ -24,6 +24,19 @@ npm run dev
 
 Frontend: `http://localhost:5173`
 
+## Deployment with infra_tools
+
+The repository is compatible with the `project/agentic-vms` branch of
+[`bluehexagons/infra_tools`](https://github.com/bluehexagons/infra_tools). It
+intentionally uses infra_tools' Rails project detection rather than an
+`infra.json` manifest. That deployment path provides persistent SQLite and
+Active Storage state, configures the Rails systemd service, builds `frontend/`,
+and serves its Vite output through nginx with Rails available at `/api`.
+
+Deploy the repository normally with infra_tools and a domain deployment spec.
+The deployer supplies `RAILS_HOST`, `FRONTEND_URL`, and `CORS_ORIGINS`; no
+secrets belong in this repository.
+
 ## Authentication
 
 Uses JWT with refresh tokens:
@@ -35,7 +48,7 @@ Uses JWT with refresh tokens:
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | /users | Create account |
+| POST | /auth/signup | Create account |
 | POST | /auth/login | Login |
 | POST | /auth/refresh | Refresh token |
 | POST | /auth/logout | Logout |
