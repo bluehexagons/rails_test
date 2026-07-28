@@ -1,13 +1,20 @@
 class AuthenticationController < ApplicationController
+  DUMMY_PASSWORD_DIGEST = BCrypt::Password.create(SecureRandom.base64(32)).freeze
+
   # POST /auth/login
   def login
     identifier = params[:username] || params[:email]
-    @user = User.find_by(username: identifier) || User.find_by(email: identifier)
+    @user = if identifier.present?
+      User.find_by(username: identifier) || User.find_by(email: identifier)
+    end
 
     # Constant-time comparison to prevent timing attacks: always run a bcrypt
     # verification so response time does not reveal whether the user exists.
-    dummy_password = BCrypt::Password.create("dummy_password_for_timing")
-    authenticated = @user ? @user.authenticate(params[:password]) : dummy_password.is_password?("dummy_password_for_timing")
+    authenticated = if @user
+      @user.authenticate(params[:password])
+    else
+      BCrypt::Password.new(DUMMY_PASSWORD_DIGEST).is_password?(params[:password].to_s)
+    end
 
     if authenticated && @user
       # Short-lived access token (1 hour) + long-lived refresh token (180 days)

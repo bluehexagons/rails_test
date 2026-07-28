@@ -5,9 +5,16 @@
 
 # Read more: https://github.com/cyu/rack-cors
 
+allowed_origins = ENV.fetch("CORS_ORIGINS", ENV.fetch("FRONTEND_URL", "http://localhost:5173"))
+  .split(",")
+  .map(&:strip)
+  .reject(&:blank?)
+
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins ENV.fetch("FRONTEND_URL", "http://localhost:5173")
+    # infra_tools supplies all public origins as a comma-separated value during
+    # deployment. FRONTEND_URL remains supported for local and older deployers.
+    origins(*allowed_origins)
 
     resource "*",
       headers: :any,

@@ -39,6 +39,14 @@ class AuthenticationControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
+  test "should not login without an identifier" do
+    User.create!(username: "no_email", password: "password", password_confirmation: "password")
+
+    post auth_login_url, params: { password: "password" }
+
+    assert_response :unauthorized
+  end
+
   test "should logout with valid refresh token" do
     refresh_token = RefreshToken.generate_for(@user)
 
