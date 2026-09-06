@@ -30,7 +30,7 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-gem "image_processing", "~> 2.0"
+gem "image_processing", "~> 2.1"
 # image_processing 2.x makes the image library a soft dependency; use libvips to
 # match Rails' default variant processor and the libvips package in the Dockerfile.
 # Loaded lazily by image_processing, so it is not required at boot.
